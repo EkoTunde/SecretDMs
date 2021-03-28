@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "156138847461",
+    "project_id": "secretdms-1cd2c",
+    "storage_bucket": "secretdms-1cd2c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:156138847461:android:7a807ff8826ed515dfa80c",
+        "android_client_info": {
+          "package_name": "com.ekosoftware.secretdms"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "156138847461-v4a8uuuq4anjb30si1seg05traqsmnef.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBm3UkYX7F0SXOHhCYKfFVdsPPWxxi9NLU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "156138847461-v4a8uuuq4anjb30si1seg05traqsmnef.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

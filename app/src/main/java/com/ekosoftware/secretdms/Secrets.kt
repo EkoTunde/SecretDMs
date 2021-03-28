@@ -1,0 +1,5 @@
+package com.ekosoftware.secretdms
+
+object Secrets {
+    const val server_key = "AAAAJFqZvOU:APA91bGj3IsxMs9YLBzkyaKC7jgytI9kt8sCtzQr5pginmeb5VNdJo1S3On8PqmrEjoj9vDmzVviNVqv1BTqyH4bq9UUOI0T03KPxVuhQ8YkRSim0HbQKsF5F1bjTf6j5Qd25VfKUkRF"
+}

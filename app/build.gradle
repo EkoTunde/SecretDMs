@@ -1,0 +1,130 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+    id 'com.google.gms.google-services'
+    id 'androidx.navigation.safeargs.kotlin'
+    id 'dagger.hilt.android.plugin'
+}
+apply plugin: 'com.google.gms.google-services'
+
+android {
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion "30.0.2"
+
+    defaultConfig {
+        applicationId "com.ekosoftware.secretdms"
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    buildFeatures.viewBinding = true
+}
+
+dependencies {
+
+    // Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    implementation "androidx.core:core-ktx:$ktxVersion"
+
+    // Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutinesPlayServicesVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
+
+    // App Compat
+    implementation "androidx.appcompat:appcompat:$appCompatVersion"
+    implementation "com.google.android.material:material:$materialVersion"
+
+    // ConstraintLayout
+    implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
+
+    // RecyclerView
+    //noinspection GradleDependency
+    implementation "androidx.recyclerview:recyclerview:$recyclerViewVersion"
+
+    // Dagger - Hilt
+    implementation "com.google.dagger:hilt-android:$hiltVersion"
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    kapt "com.google.dagger:hilt-android-compiler:$hiltVersion"
+
+    // Lifecycle -> ViewModel + LiveData
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
+
+    // Dagger - Hilt (ViewModel)
+    implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hiltViewModelVersion"
+    kapt "androidx.hilt:hilt-compiler:$hiltViewModelVersion"
+
+    // WorkManager - Kotlin + coroutines
+    implementation "androidx.work:work-runtime-ktx:$workManageVersion"
+
+    // Dagger - Hilt (WorkManager)
+    implementation "androidx.hilt:hilt-work:$hiltWorkManagerVersion"
+    kapt "androidx.hilt:hilt-compiler:$hiltWorkManagerVersion"
+
+    // Firebase - Import the BoM for the Firebase platform
+    implementation platform('com.google.firebase:firebase-bom:26.6.0')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation "com.google.firebase:firebase-auth"
+    implementation 'com.google.firebase:firebase-auth-ktx'
+    implementation "com.google.firebase:firebase-firestore"
+    implementation 'com.google.firebase:firebase-messaging'
+
+    // FirebaseUI
+    implementation "com.firebaseui:firebase-ui-auth:$firebaseUIAuthVersion"
+
+    // Google Play Services
+    implementation "com.google.android.gms:play-services-auth:$playServicesAuthVersion"
+
+    // Retrofit
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation "com.google.code.gson:gson:$gsonVersion"
+
+    // Fragment extensions
+    implementation "androidx.fragment:fragment-ktx:$fragmentKtxVersion"
+
+    // Collection extensions
+    implementation "androidx.collection:collection-ktx:$collectionKtxVersion"
+
+    // Navigation
+    implementation "androidx.navigation:navigation-runtime-ktx:$navigationKtxVersion"
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigationKtxVersion"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigationKtxVersion"
+
+    // Room
+    implementation "androidx.room:room-ktx:$roomVersion"
+    implementation "androidx.room:room-runtime:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
+
+    // Joda-Time
+    implementation "joda-time:joda-time:$jodaTimeVersion"
+
+    // Testing
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$testExtJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
+}

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    tools:context=".ui.ChatFragment">
+<!--
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+-->
+
+        <!--
+        app:layout_constraintBottom_toTopOf="@id/compose_message_content"
+        -->
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="?attr/actionBarSize"
+        app:layout_dodgeInsetEdges="bottom">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/messages_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_dodgeInsetEdges="bottom"
+            tools:listitem="@layout/item_message_received" />
+
+    </androidx.core.widget.NestedScrollView>
+
+        <!--<com.google.android.material.card.MaterialCardView
+            app:layout_insetEdge="bottom"
+            android:id="@+id/footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:behavior_hideable="false"
+            app:cardElevation="15dp"
+            app:layout_behavior="@string/bottom_sheet_behavior">
+
+            <LinearLayout
+                android:id="@+id/compose_message_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="15dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                &lt;!&ndash;<com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/timer_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:button="@drawable/switch_timer_options_visibility"
+                    android:buttonTint="?attr/colorControlNormal"
+                    android:checked="true"
+                    android:elevation="15dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="@string/timer_options_title_expanded"
+                    app:buttonTint="?attr/colorControlNormal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <include
+                    android:id="@+id/timer"
+                    layout="@layout/compose_message_timer" />&ndash;&gt;
+
+                &lt;!&ndash;<View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/grey" />
+
+                <include
+                    android:id="@+id/content"
+                    layout="@layout/compose_message_content" />&ndash;&gt;
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>-->
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/compose_message_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            app:cardElevation="15dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:behavior_peekHeight="232dp"
+            app:layout_insetEdge="bottom"
+            app:behavior_hideable="false"
+            app:layout_behavior="@string/bottom_sheet_behavior"
+            >
+
+            <!--app:behavior_hideable="false"
+            app:layout_behavior="@string/bottom_sheet_behavior"-->
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="15dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/timer_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:button="@drawable/switch_timer_options_visibility"
+                    android:buttonTint="?attr/colorControlNormal"
+                    android:checked="true"
+                    android:elevation="15dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="@string/timer_options_title_expanded"
+                    app:buttonTint="?attr/colorControlNormal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <include
+                    android:id="@+id/timer"
+                    layout="@layout/compose_message_timer" />
+
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/grey" />
+
+                <include
+                    android:id="@+id/content"
+                    layout="@layout/compose_message_content" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    <!--</androidx.coordinatorlayout.widget.CoordinatorLayout>-->
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
