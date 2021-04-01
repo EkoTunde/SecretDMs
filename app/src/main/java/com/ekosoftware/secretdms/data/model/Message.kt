@@ -26,6 +26,9 @@ data class Message(
     @ColumnInfo(name = "timer")
     var timerInMillis: Long? = 0L,
 
+    @ColumnInfo(name = "createdInMillis")
+    var createdInMillis: Long? = null,
+
     @ColumnInfo(name = "sentInMillis")
     var sentInMillis: Long? = null,
 
@@ -34,4 +37,7 @@ data class Message(
 
     @ColumnInfo(name = "readInMillis")
     var readInMillis: Long? = null,
+
+    @ColumnInfo(name = "showedTime")
+    var showedTimeInMillis: Long? = null,
 )

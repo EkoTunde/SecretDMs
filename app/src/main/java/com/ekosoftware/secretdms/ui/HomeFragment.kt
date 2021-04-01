@@ -9,6 +9,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.RecyclerView
 import com.ekosoftware.secretdms.R
 import com.ekosoftware.secretdms.app.MainActivity
 import com.ekosoftware.secretdms.base.AuthState
@@ -57,7 +59,15 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         loginBtn.setOnClickListener {
             signIn()
         }
-        chatsRecyclerView.adapter = listAdapter
+        chatsRecyclerView.apply {
+            adapter = listAdapter
+            addItemDecoration(
+                DividerItemDecoration(
+                    requireContext(),
+                    DividerItemDecoration.VERTICAL
+                )
+            )
+        }
         newChatBtn.setOnClickListener {
             val directions =
                 HomeFragmentDirections.actionHomeFragmentToDialogNewChatDialogFragment()

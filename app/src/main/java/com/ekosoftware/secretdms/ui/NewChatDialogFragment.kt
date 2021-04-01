@@ -38,19 +38,13 @@ class NewChatDialogFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.cancelButton.setOnClickListener {
-            this.dismiss()
-        }
+        binding.closeDialogButton.setOnClickListener { this.dismiss() }
         binding.createChatButton.setOnClickListener {
-            binding.creatingProgressBar.isVisible = true
-            val name = binding.name.text.toString()
+            val name = binding.name.editText?.text.toString()
             if (name.isNotEmpty()) {
                 mainViewModel.newChat(name)
-                findNavController().navigate(
-                    NewChatDialogFragmentDirections.actionDonutEntryDialogFragmentToMessageFragment(
-                        name
-                    )
-                )
+                val directions = NewChatDialogFragmentDirections.newChatDialogToChatFragment(name)
+                findNavController().navigate(directions)
                 this.dismiss()
             } else {
                 binding.name.error = Strings.get(R.string.must_indicate_a_name)

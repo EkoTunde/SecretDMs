@@ -43,14 +43,15 @@
     <string name="minutes">Minutos</string>
     <string name="hours">Horas</string>
     <string name="days">Días</string>
-    <string name="default_destruction_time">10</string>
+    <string name="default_destruction_time">10 s</string>
     <string name="timer_options_title_expanded">Timer</string>
     <string name="timer_options_title_collapsed">Timer: %1$d %2$s</string>
     <string name="seconds_abbreviated">s</string>
     <string name="minutes_abbreviated">m</string>
     <string name="hours_abbreviated">h</string>
     <string name="days_abbreviated">d</string>
-    <string name="current_slider_value_placeholder">%1$d %2$s</string>
+    <string name="current_slider_value_placeholder">%1$d%2$s</string>
     <string name="timer_wasnt_set">Sin timer</string>
     <string name="open_timer_options">Abrir opciones del timer</string>
+    <string name="new_chat_dialog_title">Nuevo chat</string>
 </resources>

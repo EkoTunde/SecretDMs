@@ -34,7 +34,8 @@ class DefaultMessagesRepository @Inject constructor(
             body,
             DIRECTION_SENT,
             friendId,
-            destructionTimeInMillis
+            destructionTimeInMillis,
+            createdInMillis = Date().time
         )
         localDataSource.insertMessage(message)
         val result = networkDataSource.sendMessage(message)

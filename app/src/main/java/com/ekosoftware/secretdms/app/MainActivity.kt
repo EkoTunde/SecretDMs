@@ -32,26 +32,28 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
-    private val viewModel by viewModels<MainViewModel>()
-
-    private val authViewModel by viewModels<AuthenticationViewModel>()
-
     companion object {
         private const val TAG = "MainActivity"
     }
 
     private lateinit var navController: NavController
 
+    override fun onNightModeChanged(mode: Int) {
+        super.onNightModeChanged(mode)
+        invalidateOptionsMenu()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val viewModel: MainViewModel by viewModels()
         //viewModel.insertDummyData()
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
-        navController.addOnDestinationChangedListener { _, destination, _ ->
+        navController.addOnDestinationChangedListener { _, _, _ ->
             invalidateOptionsMenu()
         }
         appBarConfiguration = AppBarConfiguration(navController.graph)
@@ -75,22 +77,6 @@ class MainActivity : AppCompatActivity() {
         })
 
         FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
-
-
-        /*authViewModel.isUserAuthenticated().observe(this) { authState ->
-            Log.d(TAG, "fetchAuthenticationData (Main): ${authState.javaClass}")
-            when (authState) {
-                is AuthState.Authenticated -> {
-                    loginSuccessful()
-                    authViewModel.performUsernameCheck()
-                }
-                is AuthState.ValidSession -> navController.navigate(R.id.action_global_homeFragment)
-                else -> {
-                }
-            }
-        }*/
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

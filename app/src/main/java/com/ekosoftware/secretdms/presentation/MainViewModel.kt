@@ -55,7 +55,8 @@ class MainViewModel @Inject constructor(
 
     fun getMessages(): LiveData<List<Message>> = messages ?: friendId.switchMap { id ->
         liveData<List<Message>>(viewModelScope.coroutineContext + Dispatchers.IO) {
-            id?.let { emitSource(defaultMessagesRepository.getChatWithFriendId(id)) }
+            if (id != null) emitSource(defaultMessagesRepository.getChatWithFriendId(id))
+            else emit(emptyList())
         }
     }.also {
         messages = it

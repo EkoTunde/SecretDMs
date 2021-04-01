@@ -9,7 +9,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LocalDataSource @Inject constructor(private val messageDao: MessageDao, private val chatDao: ChatDao) {
+class LocalDataSource @Inject constructor(
+    private val messageDao: MessageDao,
+    private val chatDao: ChatDao
+) {
 
     suspend fun clearDatabase() {
         messageDao.clearDatabase()
@@ -18,9 +21,13 @@ class LocalDataSource @Inject constructor(private val messageDao: MessageDao, pr
 
     fun getChats(): LiveData<List<ChatPreview>> = messageDao.liveChats()
 
-    fun getChatWithFriendId(friendId: String): LiveData<List<Message>> = messageDao.liveMessagesWithFriendId(friendId)
+    fun getChatWithFriendId(friendId: String): LiveData<List<Message>> =
+        messageDao.liveMessagesWithFriendId(friendId)
 
-    suspend fun insertDummyData() = messageDao.insertDummyData(*DummyData.messages)
+    suspend fun insertDummyData() {
+        messageDao.insert(*DummyData.messages)
+        chatDao.insert(*DummyData.chats)
+    }
 
     suspend fun newChat(friendId: String) = chatDao.insert(Chat(friendId))
 

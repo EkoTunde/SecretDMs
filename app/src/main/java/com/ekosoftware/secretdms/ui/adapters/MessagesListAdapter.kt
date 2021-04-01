@@ -40,6 +40,18 @@ class MessagesListAdapter(
         }
     }
 
+    inner class MessageReceivedViewHolder(
+        private val binding: ItemMessageReceivedBinding,
+        private val onSelected: (Message) -> Unit
+    ) : BaseViewHolder<Message>(binding.root) {
+        override fun bind(item: Message)  = binding.run {
+            binding.root.setOnClickListener { onSelected.invoke(item) }
+            msgBody.text = item.body
+            timestampTextView.text = getSentDateTime(item.sentInMillis)
+            timer.text = getTimerText(item.timerInMillis)
+        }
+    }
+
     private fun getStateIcon(item: Message) = when {
         item.readInMillis != null -> R.drawable.ic_status_read_12
         item.receivedInMillis != null -> R.drawable.ic_status_received_12
@@ -73,18 +85,6 @@ class MessagesListAdapter(
             }
         }
         return Strings.get(R.string.timer_wasnt_set)
-    }
-
-
-    inner class MessageReceivedViewHolder(
-        private val binding: ItemMessageReceivedBinding,
-        private val onSelected: (Message) -> Unit
-    ) : BaseViewHolder<Message>(binding.root) {
-        override fun bind(item: Message) {
-            binding.root.setOnClickListener {
-                onSelected(item)
-            }
-        }
     }
 
     override fun getItemViewType(position: Int): Int = getItem(position).direction

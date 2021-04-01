@@ -2,6 +2,7 @@ package com.ekosoftware.secretdms.ui
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -15,6 +16,8 @@ import com.ekosoftware.secretdms.app.resources.Strings.TimeUnits.SECONDS
 import com.ekosoftware.secretdms.databinding.FragmentChatBinding
 import com.ekosoftware.secretdms.presentation.MainViewModel
 import com.ekosoftware.secretdms.ui.adapters.MessagesListAdapter
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,8 +27,9 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
     private val args: ChatFragmentArgs by navArgs()
     private val mainViewModel: MainViewModel by activityViewModels()
     private val listAdapter: MessagesListAdapter = MessagesListAdapter {
-        // Aun nada
+        Toast.makeText(requireContext(), it.body, Toast.LENGTH_SHORT).show()
     }
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<MaterialCardView>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,21 +40,50 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
     }
 
     private fun initViews() = binding.run {
-        timerTitle.setOnCheckedChangeListener { _, isChecked -> toggleTimerLayoutState(isChecked) }
-        timer.slider.addOnChangeListener { _, _, _ -> updateCurrentSliderValueText() }
-        timer.slider.setLabelFormatter { it.toInt().toString() }
-        timer.chipGroup.setOnCheckedChangeListener { _, _ -> updateCurrentSliderValueText() }
-        content.sendMessageBtn.setOnClickListener {
-            val messageBody = content.newMessage.editText!!.text.toString().trim()
+        initBottomSheetBehavior()
+        binding.newMessage.suffixText = "@10s"
+        //timerTitle.setOnCheckedChangeListener { _, isChecked -> toggleTimerLayoutState(isChecked) }
+        slider.addOnChangeListener { _, _, _ -> updateCurrentSliderValueText() }
+        slider.setLabelFormatter { it.toInt().toString() }
+        chipGroup.setOnCheckedChangeListener { _, _ -> updateCurrentSliderValueText() }
+        sendMessageBtn.setOnClickListener {
+            val messageBody = newMessage.editText!!.text.toString().trim()
             val timer = getFinalTimerValue()
             mainViewModel.sendMessage(messageBody, timer)
-            content.newMessage.editText!!.setText("")
+            newMessage.editText!!.setText("")
         }
         messagesRecyclerView.adapter = listAdapter
     }
 
+    private fun initBottomSheetBehavior() = binding.run {
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        open.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            newMessage.suffixText = null
+        }
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) = Unit
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                val position = 1f + slideOffset
+                binding.actionsContainer.progress = position
+                if (position < 0.5) {
+                    val currentValue = binding.sliderCurrentValue.text.toString()
+                    binding.newMessage.suffixText = "@${currentValue}"
+                } else binding.newMessage.suffixText = null
+            }
+        })
+
+        binding.closeBottomSheetButton.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+        }
+    }
+
     private fun toggleTimerLayoutState(isChecked: Boolean) = binding.run {
-        arrayOf(timer.horizontalContainer, timer.slider, timer.cardViewSliderCurrentValue).forEach {
+        arrayOf(horizontalContainer, slider, cardViewSliderCurrentValue).forEach {
             it.isVisible = isChecked
         }
         timerTitle.text =
@@ -62,8 +95,8 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
     }
 
     private fun getTimerParams(): Pair<Int, String> {
-        val time = binding.timer.slider.value.toInt()
-        val unit = when (binding.timer.chipGroup.checkedChipId) {
+        val time = binding.slider.value.toInt()
+        val unit = when (binding.chipGroup.checkedChipId) {
             R.id.chip_seconds -> SECONDS
             R.id.chip_minutes -> MINUTES
             R.id.chip_hours -> HOURS
@@ -74,9 +107,9 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
     }
 
     private fun updateCurrentSliderValueText() = binding.run {
-        timer.slider.valueFrom = .0f
+        slider.valueFrom = .0f
         val params = getTimerParams()
-        timer.sliderCurrentValue.text =
+        sliderCurrentValue.text =
             Strings.get(R.string.current_slider_value_placeholder, params.first, params.second)
         val to = when (params.second) {
             SECONDS, MINUTES -> 59f
@@ -84,8 +117,8 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
             DAYS -> 60f
             else -> throw IllegalStateException("The specified argument timeUnit isn't a valid TimeUnit.")
         }
-        if (params.first > to) timer.slider.value = to
-        timer.slider.valueTo = to
+        if (params.first > to) slider.value = to
+        slider.valueTo = to
     }
 
     private fun getFinalTimerValue(): Long {
@@ -102,6 +135,7 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        listAdapter.submitList(emptyList())
         mainViewModel.clearChatId()
     }
 }

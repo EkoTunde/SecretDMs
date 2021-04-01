@@ -15,6 +15,7 @@
             app:destination="@id/messageFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
+            app:launchSingleTop="true"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
@@ -38,12 +39,14 @@
         android:name="com.ekosoftware.secretdms.ui.NewChatDialogFragment"
         android:label="NewChatDialogFragment" >
         <action
-            android:id="@+id/action_donutEntryDialogFragment_to_messageFragment"
+            android:id="@+id/newChatDialog_to_chatFragment"
             app:destination="@id/messageFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
+            app:launchSingleTop="true"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@id/homeFragment" />
     </dialog>
     <fragment
         android:id="@+id/createUsernameFragment"
