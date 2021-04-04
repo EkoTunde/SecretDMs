@@ -3,11 +3,9 @@ package com.ekosoftware.secretdms.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.ekosoftware.secretdms.R
-import com.ekosoftware.secretdms.app.App
 import com.ekosoftware.secretdms.app.resources.Strings
 import com.ekosoftware.secretdms.base.BaseViewHolder
 import com.ekosoftware.secretdms.data.model.DIRECTION_SENT
@@ -26,28 +24,31 @@ class MessagesListAdapter(
 
     inner class MessageSentViewHolder(
         private val binding: ItemMessageSentBinding,
+        private val spaceUp: Boolean = false,
         private val onSelected: (Message) -> Unit
     ) : BaseViewHolder<Message>(binding.root) {
-        override fun bind(item: Message) = binding.run {
+        override fun bind(item: Message, position: Int) = binding.run {
             /*binding.mainContainer.setOnCheckedChangeListener { _, isChecked ->
                 footerInfoContainer.isVisible = isChecked
             }*/
             binding.root.setOnClickListener { onSelected.invoke(item) }
             msgBody.text = item.body
             sentStatusImage.setImageResource(getStateIcon(item))
-            timestampTextView.text = getSentDateTime(item.sentInMillis)
+            timestampTextView.text = getSentReceivedDateTime(item.sentInMillis)
             timer.text = getTimerText(item.timerInMillis)
         }
     }
 
     inner class MessageReceivedViewHolder(
         private val binding: ItemMessageReceivedBinding,
+        private val spaceUp: Boolean = false,
         private val onSelected: (Message) -> Unit
     ) : BaseViewHolder<Message>(binding.root) {
-        override fun bind(item: Message)  = binding.run {
+        override fun bind(item: Message, position: Int)  = binding.run {
+            if(spaceUp)  binding.guideTop.setGuidelineBegin(4)
             binding.root.setOnClickListener { onSelected.invoke(item) }
             msgBody.text = item.body
-            timestampTextView.text = getSentDateTime(item.sentInMillis)
+            timestampTextView.text = getSentReceivedDateTime(item.receivedInMillis)
             timer.text = getTimerText(item.timerInMillis)
         }
     }
@@ -60,9 +61,9 @@ class MessagesListAdapter(
     }
 
 
-    private fun getSentDateTime(sentDateTimeInMillis: Long?): String {
-        if (sentDateTimeInMillis == null) return ""
-        val sentDateTime = LocalDateTime(sentDateTimeInMillis)
+    private fun getSentReceivedDateTime(timeInMillis: Long?): String {
+        if (timeInMillis == null) return ""
+        val sentDateTime = LocalDateTime(timeInMillis)
         val now = LocalDateTime()
         val date = if (now.dayOfMonth != sentDateTime.dayOfMonth) {
             if (sentDateTime.isBefore(now.minusWeeks(1)))
@@ -106,8 +107,8 @@ class MessagesListAdapter(
 
 
     override fun onBindViewHolder(holder: BaseViewHolder<*>, position: Int) = when (holder) {
-        is MessageSentViewHolder -> holder.bind(getItem(position))
-        is MessageReceivedViewHolder -> holder.bind(getItem(position))
+        is MessageSentViewHolder -> holder.bind(getItem(position),position)
+        is MessageReceivedViewHolder -> holder.bind(getItem(position),position)
         else -> throw IllegalArgumentException("The given holder (${holder.javaClass}) isn't valid")
     }
 }
