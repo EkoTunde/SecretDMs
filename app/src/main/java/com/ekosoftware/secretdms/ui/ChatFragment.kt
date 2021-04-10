@@ -7,12 +7,14 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.RecyclerView
 import com.ekosoftware.secretdms.R
 import com.ekosoftware.secretdms.app.resources.Strings
-import com.ekosoftware.secretdms.app.resources.Strings.TimeUnits.DAYS
-import com.ekosoftware.secretdms.app.resources.Strings.TimeUnits.HOURS
-import com.ekosoftware.secretdms.app.resources.Strings.TimeUnits.MINUTES
-import com.ekosoftware.secretdms.app.resources.Strings.TimeUnits.SECONDS
+import com.ekosoftware.secretdms.app.resources.TimeUnits
+import com.ekosoftware.secretdms.app.resources.TimeUnits.DAYS
+import com.ekosoftware.secretdms.app.resources.TimeUnits.HOURS
+import com.ekosoftware.secretdms.app.resources.TimeUnits.MINUTES
+import com.ekosoftware.secretdms.app.resources.TimeUnits.SECONDS
 import com.ekosoftware.secretdms.databinding.FragmentChatBinding
 import com.ekosoftware.secretdms.presentation.MainViewModel
 import com.ekosoftware.secretdms.ui.adapters.MessagesListAdapter
@@ -26,8 +28,10 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
     private lateinit var binding: FragmentChatBinding
     private val args: ChatFragmentArgs by navArgs()
     private val mainViewModel: MainViewModel by activityViewModels()
-    private val listAdapter: MessagesListAdapter = MessagesListAdapter {
-        Toast.makeText(requireContext(), it.body, Toast.LENGTH_SHORT).show()
+    private val listAdapter: MessagesListAdapter by lazy {
+        MessagesListAdapter(requireContext()) {
+            //Toast.makeText(requireContext(), it.body, Toast.LENGTH_SHORT).show()
+        }
     }
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<MaterialCardView>
 
@@ -124,12 +128,13 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
     private fun getFinalTimerValue(): Long {
         val params = getTimerParams()
         val amount: Int = params.first
-        val unit: Long = Strings.TimeUnits.getValue(params.second)
+        val unit: Long = TimeUnits.getValue(params.second)
         return amount * unit
     }
 
     private fun fetchChats() = mainViewModel.getMessages().observe(viewLifecycleOwner) {
         listAdapter.submitList(it)
+        listAdapter.notifyDataSetChanged()
         binding.messagesRecyclerView.scrollToPosition(it.lastIndex)
     }
 

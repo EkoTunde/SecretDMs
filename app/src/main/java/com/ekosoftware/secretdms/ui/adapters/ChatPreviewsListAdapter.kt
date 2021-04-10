@@ -27,9 +27,7 @@ class ChatPreviewsListAdapter(
         private val onSelected: (ChatPreview) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ChatPreview) {
-            binding.root.setOnClickListener {
-                onSelected(item)
-            }
+            binding.root.setOnClickListener { onSelected(item) }
             binding.run {
                 friend.text = item.friendId
                 val lastDateTime = getLastDateTime(item.lastMessageTime)

@@ -1,65 +1,85 @@
 package com.ekosoftware.secretdms.ui.adapters
 
 
+import android.content.Context
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.Guideline
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.ekosoftware.secretdms.R
-import com.ekosoftware.secretdms.app.resources.Strings
+import com.ekosoftware.secretdms.app.resources.TimeUnits
 import com.ekosoftware.secretdms.base.BaseViewHolder
 import com.ekosoftware.secretdms.data.model.DIRECTION_SENT
 import com.ekosoftware.secretdms.data.model.Message
 import com.ekosoftware.secretdms.databinding.ItemMessageReceivedBinding
 import com.ekosoftware.secretdms.databinding.ItemMessageSentBinding
+import com.google.android.material.card.MaterialCardView
+import com.google.android.material.shape.CornerFamily
 import org.joda.time.LocalDateTime
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
+
 class MessagesListAdapter(
+    private val context: Context,
     private var onSelected: (Message) -> Unit
 ) :
-    ListAdapter<Message, BaseViewHolder<*>>(MessageDiffCallback()) {
+    ListAdapter<Message, BaseViewHolder<*, *, *>>(DIFF_CALLBACK) {
 
     inner class MessageSentViewHolder(
         private val binding: ItemMessageSentBinding,
-        private val spaceUp: Boolean = false,
         private val onSelected: (Message) -> Unit
-    ) : BaseViewHolder<Message>(binding.root) {
-        override fun bind(item: Message, position: Int) = binding.run {
-            /*binding.mainContainer.setOnCheckedChangeListener { _, isChecked ->
-                footerInfoContainer.isVisible = isChecked
-            }*/
-            binding.root.setOnClickListener { onSelected.invoke(item) }
+    ) : BaseViewHolder<Message, Int, Boolean>(binding.root) {
+        override fun bind(item: Message, param2: Int, param3: Boolean) = binding.run {
+            guideTop.changeTopGuideline(param2)
+            viewMarginBottom.isVisible = param3
+            subContainer.radius
+            arrayOf(root, subContainer).forEach {
+                it.setOnClickListener {
+                    showInfoCheckBox.isChecked = !showInfoCheckBox.isChecked
+                    footerInfoContainer.isVisible = showInfoCheckBox.isChecked
+                }
+            }
             msgBody.text = item.body
-            sentStatusImage.setImageResource(getStateIcon(item))
             timestampTextView.text = getSentReceivedDateTime(item.sentInMillis)
-            timer.text = getTimerText(item.timerInMillis)
+            val timerText = getTimerText(item.timerInMillis)
+            timer.text = timerText
+            timer.isVisible = timerText == null
         }
     }
 
     inner class MessageReceivedViewHolder(
         private val binding: ItemMessageReceivedBinding,
-        private val spaceUp: Boolean = false,
         private val onSelected: (Message) -> Unit
-    ) : BaseViewHolder<Message>(binding.root) {
-        override fun bind(item: Message, position: Int)  = binding.run {
-            if(spaceUp)  binding.guideTop.setGuidelineBegin(4)
-            binding.root.setOnClickListener { onSelected.invoke(item) }
+    ) : BaseViewHolder<Message, Int, Boolean>(binding.root) {
+        override fun bind(item: Message, param2: Int, param3: Boolean) = binding.run {
+            guideTop.changeTopGuideline(param2)
+            viewMarginBottom.isVisible = param3
+            arrayOf(root, subContainer).forEach {
+                it.setOnClickListener {
+                    showInfoCheckBox.isChecked = !showInfoCheckBox.isChecked
+                    timestampTextView.isVisible = showInfoCheckBox.isChecked
+                }
+            }
             msgBody.text = item.body
             timestampTextView.text = getSentReceivedDateTime(item.receivedInMillis)
-            timer.text = getTimerText(item.timerInMillis)
+            if (item.timerInMillis != null && item.timerInMillis!! > 0L) {
+                timer.text = getTimerText(item.timerInMillis)
+            } else timer.isVisible = false
         }
     }
 
-    private fun getStateIcon(item: Message) = when {
-        item.readInMillis != null -> R.drawable.ic_status_read_12
-        item.receivedInMillis != null -> R.drawable.ic_status_received_12
-        item.sentInMillis != null -> R.drawable.ic_status_sent_12
-        else -> R.drawable.ic_status_pending_12
+    private fun Guideline.changeTopGuideline(positionInList: Int) {
+        val constParam: ConstraintLayout.LayoutParams =
+            this.layoutParams as ConstraintLayout.LayoutParams
+        constParam.guideBegin = if (positionInList == POSITION_FIRST) 32 else 8
+        this.layoutParams = constParam
     }
-
 
     private fun getSentReceivedDateTime(timeInMillis: Long?): String {
         if (timeInMillis == null) return ""
@@ -77,20 +97,20 @@ class MessagesListAdapter(
         return "$date$time"
     }
 
-    private fun getTimerText(timerInMillis: Long?): String {
+    private fun getTimerText(timerInMillis: Long?): String? {
         if (timerInMillis != null && timerInMillis > 0L) {
             var time = timerInMillis / 1000
-            for (triple: Triple<String, Long, Int> in Strings.TimeUnits.asArray()) {
+            for (triple: Triple<String, Long, Int> in TimeUnits.asArray()) {
                 time /= triple.second
                 if (time < triple.third + 1) return "$time ${triple.first}"
             }
         }
-        return Strings.get(R.string.timer_wasnt_set)
+        return null
     }
 
     override fun getItemViewType(position: Int): Int = getItem(position).direction
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<*> {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<*, *, *> {
         return if (viewType == DIRECTION_SENT) MessageSentViewHolder(
             ItemMessageSentBinding.inflate(LayoutInflater.from(parent.context), parent, false),
             onSelected
@@ -106,17 +126,40 @@ class MessagesListAdapter(
     }
 
 
-    override fun onBindViewHolder(holder: BaseViewHolder<*>, position: Int) = when (holder) {
-        is MessageSentViewHolder -> holder.bind(getItem(position),position)
-        is MessageReceivedViewHolder -> holder.bind(getItem(position),position)
-        else -> throw IllegalArgumentException("The given holder (${holder.javaClass}) isn't valid")
+    override fun onBindViewHolder(holder: BaseViewHolder<*, *, *>, position: Int) {
+        getItem(position)?.let { item ->
+
+            val positionInList = if (position == 0 || getItem(position-1).direction != item.direction) {
+                POSITION_FIRST
+            } else POSITION_NOT_FIRST
+
+            when (holder) {
+                is MessageSentViewHolder -> holder.bind(
+                    item,
+                    positionInList,
+                    position == itemCount - 1
+                )
+                is MessageReceivedViewHolder -> holder.bind(
+                    item,
+                    positionInList,
+                    position == itemCount - 1
+                )
+                else -> throw IllegalArgumentException("The given holder (${holder.javaClass}) isn't valid")
+            }
+        }
     }
-}
 
-class MessageDiffCallback : DiffUtil.ItemCallback<Message>() {
-    override fun areItemsTheSame(oldItem: Message, newItem: Message): Boolean =
-        oldItem.id == newItem.id
+    companion object {
 
-    override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean =
-        oldItem == newItem
+        private const val POSITION_FIRST = 1
+        private const val POSITION_NOT_FIRST = 0
+
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Message>() {
+            override fun areItemsTheSame(oldItem: Message, newItem: Message): Boolean =
+                oldItem.id == newItem.id
+
+            override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean =
+                oldItem == newItem
+        }
+    }
 }

@@ -14,14 +14,6 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="ReceivedMessageMaterialCardView" parent="Theme.MaterialComponents.DayNight.DarkActionBar" >
-        <item name="cardBackgroundColor">@color/grey</item>
-    </style>
-
-    <style name="SentMessageMaterialCardView" parent="Theme.MaterialComponents.DayNight.DarkActionBar" >
-        <item name="cardBackgroundColor">@color/blue_light</item>
-    </style>
-
     <style name="SentMessageText" parent="Theme.MaterialComponents.DayNight.DarkActionBar" >
         <item name="android:textColor">@color/purple_700</item>
     </style>
@@ -34,6 +26,14 @@
         <item name="android:textColor">?attr/colorPrimary</item>
         <item name="checkedIconTint">?attr/colorPrimary</item>
         <item name="checkedIcon">@drawable/ic_done_24</item>
+    </style>
+
+    <style name="ReceivedMessageMaterialCardView" parent="Theme.MaterialComponents.DayNight.DarkActionBar" >
+        <item name="cardBackgroundColor">@color/grey</item>
+    </style>
+
+    <style name="SentMessageMaterialCardView" parent="Theme.MaterialComponents.DayNight.DarkActionBar" >
+        <item name="cardBackgroundColor">@color/blue_light</item>
     </style>
 
 </resources>

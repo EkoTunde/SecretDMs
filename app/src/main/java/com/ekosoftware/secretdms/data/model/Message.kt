@@ -3,6 +3,7 @@ package com.ekosoftware.secretdms.data.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.ekosoftware.secretdms.app.resources.TimeUnits
 
 const val DIRECTION_SENT = 1
 const val DIRECTION_RECEIVED = 2
@@ -41,3 +42,18 @@ data class Message(
     @ColumnInfo(name = "showedTime")
     var showedTimeInMillis: Long? = null,
 )
+
+
+private fun Long?.getTimerText(timerInMillis: Long?): String? {
+    this?.let {
+
+    }
+    if (timerInMillis != null && timerInMillis > 0L) {
+        var time = timerInMillis / 1000
+        for (triple: Triple<String, Long, Int> in TimeUnits.asArray()) {
+            time /= triple.second
+            if (time < triple.third + 1) return "$time ${triple.first}"
+        }
+    }
+    return null
+}

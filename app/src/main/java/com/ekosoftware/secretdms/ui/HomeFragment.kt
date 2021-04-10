@@ -53,6 +53,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         binding = FragmentHomeBinding.bind(view)
         fetchAuthenticationData()
         initViews()
+        //mainViewModel.insertDummyData()
     }
 
     private fun initViews() = binding.run {
