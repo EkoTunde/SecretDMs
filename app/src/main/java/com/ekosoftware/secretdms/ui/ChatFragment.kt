@@ -1,8 +1,8 @@
 package com.ekosoftware.secretdms.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -43,20 +43,49 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
         fetchChats()
     }
 
+    private val TAG = "ChatFragment"
+
+    private var scrollPosition = 0
+
     private fun initViews() = binding.run {
         initBottomSheetBehavior()
         binding.newMessage.suffixText = "@10s"
-        //timerTitle.setOnCheckedChangeListener { _, isChecked -> toggleTimerLayoutState(isChecked) }
         slider.addOnChangeListener { _, _, _ -> updateCurrentSliderValueText() }
         slider.setLabelFormatter { it.toInt().toString() }
         chipGroup.setOnCheckedChangeListener { _, _ -> updateCurrentSliderValueText() }
+        /*newMessage.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && fabGoBackDown.isShown) resetScrollingPosition()
+        }*/
         sendMessageBtn.setOnClickListener {
-            val messageBody = newMessage.editText!!.text.toString().trim()
-            val timer = getFinalTimerValue()
-            mainViewModel.sendMessage(messageBody, timer)
-            newMessage.editText!!.setText("")
+            newMessage.editText!!.text.toString().trim().takeIf { it.isNotEmpty() }?.let { messageBody ->
+                val timer = getFinalTimerValue()
+                mainViewModel.sendMessage(messageBody, timer)
+                newMessage.editText!!.setText("")
+                //resetScrollingPosition()
+            }
         }
         messagesRecyclerView.adapter = listAdapter
+        messagesRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                scrollPosition += dy
+                Log.d(TAG, "onScrolled: $scrollPosition")
+                if (scrollPosition <= 50 && scrollPosition >= -50) {
+                    if (fabGoBackDown.isShown) fabGoBackDown.hide()
+                } else {
+                    if (!fabGoBackDown.isShown) fabGoBackDown.show()
+                }
+                //if (scrollPosition != 0) fabGoBackDown.show() else fabGoBackDown.hide()
+            }
+        })
+        fabGoBackDown.setOnClickListener {
+            resetScrollingPosition()
+        }
+    }
+
+    private fun resetScrollingPosition() = binding.run {
+        scrollPosition = 0
+        fabGoBackDown.hide()
+        messagesRecyclerView.scrollToPosition(messagesRecyclerView.adapter!!.itemCount - 1)
     }
 
     private fun initBottomSheetBehavior() = binding.run {
@@ -80,9 +109,8 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
             }
         })
 
-        binding.closeBottomSheetButton.setOnClickListener {
+        closeBottomSheetButton.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-
         }
     }
 
@@ -134,7 +162,6 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
 
     private fun fetchChats() = mainViewModel.getMessages().observe(viewLifecycleOwner) {
         listAdapter.submitList(it)
-        listAdapter.notifyDataSetChanged()
         binding.messagesRecyclerView.scrollToPosition(it.lastIndex)
     }
 

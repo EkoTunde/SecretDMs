@@ -62,8 +62,7 @@ class AuthenticationViewModel @Inject constructor(
     private var userData: LiveData<Resource<Pair<String, String>>>? = null
 
     fun getUserData(): LiveData<Resource<Pair<String, String>>> =
-        userData
-            ?: liveData<Resource<Pair<String, String>>>(viewModelScope.coroutineContext + Dispatchers.Default) {
+        userData ?: liveData<Resource<Pair<String, String>>>(viewModelScope.coroutineContext + Dispatchers.Default) {
                 emit(Resource.Loading())
                 try {
                     emit(repository.getUserData())

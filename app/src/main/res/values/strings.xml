@@ -7,7 +7,7 @@
     <string name="message">Mensaje</string>
     <string name="write_a_message">Escribe un mensaje</string>
     <string name="new_chat">Iniciar chat</string>
-    <string name="defaultChannel">SecretDMs default channel</string>
+    <string name="defaultChannelName">SecretDMs default channel</string>
     <string name="notificationDescription">Notifications from SecretDMs</string>
     <string name="deepLinkNotificationTitle">Deep Link</string>
     <string name="newMessageReceived">Nuevo mensaje recibido</string>
@@ -54,4 +54,9 @@
     <string name="timer_wasnt_set">Sin timer</string>
     <string name="open_timer_options">Abrir opciones del timer</string>
     <string name="new_chat_dialog_title">Nuevo chat</string>
+    <string name="received_timer_text">"%1$d%2$s"</string>
+    <string name="sent_message_extra_info">" - %1$d%2$s"</string>
+    <string name="new_message_received">Nuevo mensaje</string>
+    <string name="message_has_no_timer">Sin timer establecido</string>
+    <string name="you_got_n_time_to_read">Timer establecido en %1$d%2$s</string>
 </resources>

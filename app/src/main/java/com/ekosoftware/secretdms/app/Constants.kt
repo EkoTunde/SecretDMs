@@ -6,4 +6,8 @@ object Constants {
     const val RC_SIGN_IN = 123
     const val USER = "user"
     const val USERS = "users"
+    const val MESSAGES = "messages"
+    const val PARAM_UID = "uid"
+    const val PARAM_EMAIL = "email"
+    const val PARAM_USERNAME = "username"
 }

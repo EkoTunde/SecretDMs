@@ -12,11 +12,14 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/compose_message_content"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/messages_recycler_view"
             android:layout_width="match_parent"
+            android:windowSoftInputMode="adjustPan"
+            app:stackFromEnd="true"
             android:layout_height="wrap_content"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_dodgeInsetEdges="bottom"
@@ -93,8 +96,8 @@
                             android:id="@+id/chip_group"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            app:singleLine="true"
                             app:selectionRequired="true"
+                            app:singleLine="true"
                             app:singleSelection="true">
 
                             <com.google.android.material.chip.Chip
@@ -103,32 +106,32 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:checked="true"
-                                app:checkedIconEnabled="true"
-                                android:text="@string/seconds" />
+                                android:text="@string/seconds"
+                                app:checkedIconEnabled="true" />
 
                             <com.google.android.material.chip.Chip
                                 android:id="@+id/chip_minutes"
-                                app:checkedIconEnabled="true"
                                 style="@style/TimerUnitsChip"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/minutes" />
+                                android:text="@string/minutes"
+                                app:checkedIconEnabled="true" />
 
                             <com.google.android.material.chip.Chip
                                 android:id="@+id/chip_hours"
-                                app:checkedIconEnabled="true"
                                 style="@style/TimerUnitsChip"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/hours" />
+                                android:text="@string/hours"
+                                app:checkedIconEnabled="true" />
 
                             <com.google.android.material.chip.Chip
                                 android:id="@+id/chip_days"
-                                app:checkedIconEnabled="true"
                                 style="@style/TimerUnitsChip"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/days" />
+                                android:text="@string/days"
+                                app:checkedIconEnabled="true" />
 
                         </com.google.android.material.chip.ChipGroup>
 
@@ -150,12 +153,12 @@
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/card_view_slider_current_value"
+                        style="@style/MaterialCardView.CurrentSelectValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="16dp"
-                        app:cardElevation="0dp"
                         android:padding="4dp"
-                        style="@style/MaterialCardView.CurrentSelectValue"
+                        app:cardElevation="0dp"
                         app:layout_constraintBottom_toBottomOf="@id/slider"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/slider"
@@ -176,6 +179,19 @@
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_go_back_down"
+            style="@style/GoDownFab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:contentDescription="@string/app_name"
+            android:visibility="gone"
+            app:fabCustomSize="36dp"
+            app:maxImageSize="14dp"
+            tools:visibility="visible" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
@@ -236,7 +252,6 @@
                 app:layout_constraintEnd_toStartOf="@+id/send_message_btn"
                 app:layout_constraintStart_toEndOf="@+id/open"
                 app:layout_constraintTop_toTopOf="parent"
-
                 app:passwordToggleEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText

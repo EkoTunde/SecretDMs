@@ -12,5 +12,6 @@ interface MessagesRepository {
     suspend fun insertDummyData()
     suspend fun newChat(friendId: String)
     suspend fun sendMessage(friendId: String, body: String, destructionTimeInMillis: Long): Resource<Boolean>
-    suspend fun clearDatabase()
+    suspend fun saveMessage(friendId: String, body: String, timerInMillis: Long)
+    suspend fun clearData()
 }

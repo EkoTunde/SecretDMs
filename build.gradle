@@ -55,7 +55,7 @@ ext {
     gsonVersion = '2.8.6'
     hiltVersion = '2.31-alpha'
     hiltViewModelVersion = '1.0.0-alpha03'
-    hiltWorkManagerVersion = '1.0.0-alpha01'
+    hiltWorkManagerVersion = '1.0.0-beta01'
     jodaTimeVersion = '2.10.8'
     junitVersion = '4.13.2'
     ktxVersion = '1.3.2'

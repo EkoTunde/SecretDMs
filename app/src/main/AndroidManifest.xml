@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.ekosoftware.secretdms">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -24,7 +25,8 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".app.MainActivity">
+        <activity android:name=".app.MainActivity"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -42,6 +44,12 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/purple_500" />
+
+        <provider
+            android:name="androidx.work.impl.WorkManagerInitializer"
+            android:authorities="com.ekosoftware.secretdms.workmanager-init"
+            tools:node="remove"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -41,19 +41,7 @@ data class Message(
 
     @ColumnInfo(name = "showedTime")
     var showedTimeInMillis: Long? = null,
+
+    @ColumnInfo(name = "read")
+    var read: Boolean = false
 )
-
-
-private fun Long?.getTimerText(timerInMillis: Long?): String? {
-    this?.let {
-
-    }
-    if (timerInMillis != null && timerInMillis > 0L) {
-        var time = timerInMillis / 1000
-        for (triple: Triple<String, Long, Int> in TimeUnits.asArray()) {
-            time /= triple.second
-            if (time < triple.third + 1) return "$time ${triple.first}"
-        }
-    }
-    return null
-}

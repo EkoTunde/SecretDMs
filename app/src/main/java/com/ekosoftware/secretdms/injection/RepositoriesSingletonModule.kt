@@ -9,19 +9,14 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityRetainedComponent
+import dagger.hilt.components.SingletonComponent
 
 @Module
-@InstallIn(ActivityRetainedComponent::class)
-abstract class ActivityRetainedModule {
+@InstallIn(SingletonComponent::class)
+abstract class RepositoriesSingletonModule {
+    @Binds
+    abstract fun bindMessagesRepository(implementation: DefaultMessagesRepository): MessagesRepository
 
-  @Binds
-  abstract fun bindMessagesRepository(
-    implementation: DefaultMessagesRepository
-  ): MessagesRepository
-
-  @Binds
-  abstract fun bindAuthenticationRepository(
-    implementation: DefaultAuthenticationRepository
-  ): AuthenticationRepository
-
+    @Binds
+    abstract fun bindAuthenticationRepository(implementation: DefaultAuthenticationRepository): AuthenticationRepository
 }

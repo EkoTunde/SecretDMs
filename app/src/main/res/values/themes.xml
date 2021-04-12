@@ -36,4 +36,21 @@
         <item name="cardBackgroundColor">@color/blue_light</item>
     </style>
 
+    <style name="GoDownFab" parent="Widget.Design.FloatingActionButton">
+        <item name="android:src">@drawable/ic_down_day</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:cropToPadding">true</item>
+        <item name="tint">@color/black</item>
+        <item name="borderWidth">0dp</item>
+        <item name="android:backgroundTint">@color/white</item>
+    </style>
+
+    <style name="MessagePin.Received" parent="" >
+        <item name="android:src">@drawable/ic_message_received_pin</item>
+    </style>
+
+    <style name="MessagePin.Sent" parent="" >
+        <item name="android:src">@drawable/ic_message_sent_pin</item>
+    </style>
+
 </resources>

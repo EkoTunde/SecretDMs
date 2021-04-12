@@ -1,6 +1,5 @@
 package com.ekosoftware.secretdms.presentation
 
-import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.*
 import com.ekosoftware.secretdms.base.Resource
 import com.ekosoftware.secretdms.data.auth.Authentication
@@ -37,9 +36,7 @@ class MainViewModel @Inject constructor(
 
     fun getChats(): LiveData<List<ChatPreview>> = chats ?: liveData {
         emitSource(defaultMessagesRepository.getChats())//.map { it.reversed() })
-    }.also {
-        chats = it
-    }
+    }.also { chats = it }
 
     private val friendId: MutableLiveData<String?> = savedStateHandle.getLiveData<String?>(FRIEND_ID_KEY, null)
 
@@ -67,10 +64,9 @@ class MainViewModel @Inject constructor(
             defaultMessagesRepository.newChat(friendId)
         }
 
-    fun clearDatabase(): Job =
-        CoroutineScope(viewModelScope.coroutineContext + Dispatchers.IO).launch {
-            defaultMessagesRepository.clearDatabase()
-        }
+    fun clearData(): Job = CoroutineScope(viewModelScope.coroutineContext + Dispatchers.IO).launch {
+        defaultMessagesRepository.clearData()
+    }
 
     fun deleteMessage(messageId: String) {
     }

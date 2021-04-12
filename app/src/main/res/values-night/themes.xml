@@ -14,26 +14,46 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="SentMessageText" parent="Theme.MaterialComponents.DayNight.DarkActionBar" >
+    <style name="SentMessageText" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="android:textColor">@color/white</item>
     </style>
 
-    <style name="MaterialCardView.CurrentSelectValue" parent="Widget.MaterialComponents.CardView" >
+    <style name="MaterialCardView.CurrentSelectValue" parent="Widget.MaterialComponents.CardView">
 
     </style>
 
-    <style name="TimerUnitsChip" parent="Widget.MaterialComponents.Chip.Choice" >
+    <style name="TimerUnitsChip" parent="Widget.MaterialComponents.Chip.Choice">
         <item name="android:textColor">?attr/colorSecondary</item>
         <item name="checkedIconTint">?attr/colorSecondary</item>
         <item name="checkedIcon">@drawable/ic_done_24</item>
     </style>
 
-    <style name="ReceivedMessageMaterialCardView" parent="Theme.MaterialComponents.DayNight.DarkActionBar" >
+    <style name="ReceivedMessageMaterialCardView" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="cardBackgroundColor">#3E3E3E</item>
     </style>
 
-    <style name="SentMessageMaterialCardView" parent="Theme.MaterialComponents.DayNight.DarkActionBar" >
+    <style name="SentMessageMaterialCardView" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="cardBackgroundColor">?attr/colorPrimaryVariant</item>
     </style>
+
+    <style name="GoDownFab" parent="Widget.Design.FloatingActionButton">
+        <item name="android:src">@drawable/ic_down_night</item>
+        <item name="tint">@color/white</item>
+        <item name="borderWidth">0dp</item>
+        <item name="android:backgroundTint">#414141</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:cropToPadding">true</item>
+    </style>
+
+    <style name="MessagePin.Received" parent="">
+        <item name="android:tint">#3E3E3E</item>
+        <item name="android:src">@drawable/ic_message_received_pin</item>
+    </style>
+
+    <style name="MessagePin.Sent" parent="">
+        <item name="android:tint">?attr/colorPrimaryVariant</item>
+        <item name="android:src">@drawable/ic_message_sent_pin</item>
+    </style>
+
 
 </resources>

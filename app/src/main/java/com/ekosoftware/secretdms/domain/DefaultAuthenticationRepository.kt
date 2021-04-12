@@ -7,8 +7,9 @@ import com.ekosoftware.secretdms.data.auth.AuthenticationDataSource
 import com.ekosoftware.secretdms.data.model.User
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@ActivityRetainedScoped
+@Singleton
 class DefaultAuthenticationRepository @Inject constructor(private val authenticationDataSource: AuthenticationDataSource) : AuthenticationRepository {
     override fun isUserAuthenticated(): MutableLiveData<AuthState<User>> = authenticationDataSource.isUserAuthenticateInFirebaseMutableLiveData
     override fun validateUser() = authenticationDataSource.validateUser()

@@ -14,10 +14,12 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.ekosoftware.secretdms.*
+import com.ekosoftware.secretdms.data.remote.FCMToken
 import com.ekosoftware.secretdms.data.remote.FirebaseService
 import com.ekosoftware.secretdms.databinding.ActivityMainBinding
 import com.ekosoftware.secretdms.presentation.AuthenticationViewModel
 import com.ekosoftware.secretdms.presentation.MainViewModel
+import com.ekosoftware.secretdms.util.hideKeyboard
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
@@ -47,19 +49,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val viewModel: MainViewModel by viewModels()
-        //viewModel.insertDummyData()
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
         navController.addOnDestinationChangedListener { _, _, _ ->
             invalidateOptionsMenu()
+            hideKeyboard()
         }
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
-
-        FirebaseService.sharedPref = getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
@@ -68,15 +67,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             // Get new FCM registration token
-            val token = task.result
-
-            FirebaseService.token = token
-            //binding.tokenEditText.setText(token)
-
-            Log.d(TAG, token!!)
+            FCMToken.token = task.result
         })
-
-        FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

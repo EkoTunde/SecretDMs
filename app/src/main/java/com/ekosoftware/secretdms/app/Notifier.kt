@@ -18,16 +18,18 @@ import kotlin.random.Random
  */
 object Notifier {
 
-    private const val CHANNEL_ID = "Default"
+    const val CHANNEL_ID = "Default"
 
     fun postNotification(
         context: Context,
+        title: String,
+        content: String,
         intent: PendingIntent,
-        friendId: String
+        priority: Int = NotificationCompat.PRIORITY_HIGH,
+        autoCancel: Boolean = true
     ) {
 
-        val notificationManager =
-            App.instance.getSystemService(AppCompatActivity.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = App.instance.getSystemService(AppCompatActivity.NOTIFICATION_SERVICE) as NotificationManager
 
         val notificationId = Random.nextInt()
 
@@ -36,12 +38,12 @@ object Notifier {
         }
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setContentTitle(context.getString(R.string.deepLinkNotificationTitle))
+            .setContentTitle(title)
+            .setContentText(content)
             .setSmallIcon(R.drawable.ic_secretdms_24)
-            .setContentText(Strings.get(R.string.newMessageFrom, friendId))
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setPriority(priority)
             .setContentIntent(intent)
-            .setAutoCancel(true)
+            .setAutoCancel(autoCancel)
             .build()
 
         notificationManager.notify(notificationId, notification)
@@ -49,7 +51,7 @@ object Notifier {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel(notificationManager: NotificationManager) {
-        val name = Strings.get(R.string.defaultChannel)
+        val name = Strings.get(R.string.defaultChannelName)
         val importance = NotificationManager.IMPORTANCE_DEFAULT
         val channel =
             NotificationChannel(CHANNEL_ID, name, importance).apply {

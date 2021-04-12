@@ -14,12 +14,14 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.ekosoftware.secretdms.app.App
+import com.ekosoftware.secretdms.app.Constants.USERS
 import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.tasks.await
 
 
@@ -31,8 +33,7 @@ object Authentication {
     private const val USER_NAME_PREF_KEY = "user name pref key"
 
     init {
-        App.instance.getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
-            .also { this.sharedPref = it }
+        App.instance.getSharedPreferences("sharedPref", Context.MODE_PRIVATE).also { this.sharedPref = it }
     }
 
     private val auth by lazy { FirebaseAuth.getInstance() }
@@ -54,7 +55,7 @@ object Authentication {
             return sharedPref?.getString(USER_UID_PREF_KEY, auth.currentUser?.uid)
         }
         set(value) {
-            sharedPref?.edit()?.putString(USER_EMAIL_PREF_KEY, value)?.apply()
+            sharedPref?.edit()?.putString(USER_UID_PREF_KEY, value)?.apply()
         }
 
     var email: String?
@@ -70,10 +71,17 @@ object Authentication {
             return sharedPref?.getString(USER_NAME_PREF_KEY, null)
         }
         set(value) {
-            sharedPref?.edit()?.putString(USER_EMAIL_PREF_KEY, value)?.apply()
+            value?.let { FirebaseMessaging.getInstance().subscribeToTopic(it) }
+            sharedPref?.edit()?.putString(USER_NAME_PREF_KEY, value)?.apply()
         }
 
     val isUserLoggedIn get() = auth.currentUser != null
+
+    fun clearData() {
+        username = null
+        email = null
+        uid = null
+    }
 
 
     private var resultLauncher: ActivityResultLauncher<Intent>? = null
@@ -88,10 +96,10 @@ object Authentication {
     }
 
     fun userDocument(uid: String): Task<DocumentSnapshot> {
-        return firestore.collection("users").document(uid).get()
+        return firestore.collection(USERS).document(uid).get()
     }
 
-    private fun createInputDataForUri(uid: String?) : Data {
+    private fun createInputDataForUri(uid: String?): Data {
         if (uid == null) throw IllegalStateException("User must be logged in.")
         return Data.Builder().apply {
             putString("uid", uid)
