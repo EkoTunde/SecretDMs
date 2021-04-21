@@ -15,7 +15,7 @@ class FirebaseService : FirebaseMessagingService() {
 
         // Start worker to save data into database and notify user of new message!
         val pairs: Array<Pair<String, String>> = message.data.toList().toTypedArray()
-        val saveDataRequest = OneTimeWorkRequestBuilder<SaveReceivedMessageWork>()
+        val saveDataRequest = OneTimeWorkRequestBuilder<HandleReceivedMessageWork>()
             .setInputData(workDataOf(*pairs))
             .build()
         workManager.enqueue(saveDataRequest)

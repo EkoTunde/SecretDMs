@@ -11,7 +11,10 @@ interface MessagesRepository {
     fun getChatWithFriendId(friendId: String): LiveData<List<Message>>
     suspend fun insertDummyData()
     suspend fun newChat(friendId: String)
-    suspend fun sendMessage(friendId: String, body: String, destructionTimeInMillis: Long): Resource<Boolean>
-    suspend fun saveMessage(friendId: String, body: String, timerInMillis: Long)
+    suspend fun sendMessage(friendId: String, body: String, timerInMillis: Long): Resource<Boolean>
+    suspend fun saveMessage(friendId: String, body: String, timerInMillis: Long, messageId: String)
     suspend fun clearData()
+    suspend fun deleteChats(chatsForDeletion: List<ChatPreview>?)
+    suspend fun deleteMessages(messagesForDeletion: List<Message>?)
+    suspend fun updateTimers(friendId: String)
 }

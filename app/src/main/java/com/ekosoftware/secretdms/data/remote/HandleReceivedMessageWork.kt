@@ -3,12 +3,12 @@ package com.ekosoftware.secretdms.data.remote
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
-import androidx.work.Data
-import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.ekosoftware.secretdms.Constants.MESSAGE_PARAM_BODY
+import com.ekosoftware.secretdms.Constants.MESSAGE_PARAM_SENDER
+import com.ekosoftware.secretdms.Constants.MESSAGE_PARAM_TIMER_IN_MILLIS
 import com.ekosoftware.secretdms.R
 import com.ekosoftware.secretdms.app.MainActivity
 import com.ekosoftware.secretdms.app.Notifier
@@ -19,22 +19,21 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 
 @HiltWorker
-class SaveReceivedMessageWork @AssistedInject constructor(
+class HandleReceivedMessageWork @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
     private val defaultMessagesRepository: DefaultMessagesRepository,
 ) : CoroutineWorker(appContext, workerParams) {
 
-    private val TAG = "SaveReceivedMessageWork"
     override suspend fun doWork(): Result {
 
-        val from = inputData.getString("sender") ?: ""
-        val body = inputData.getString("body") ?: ""
-        val timerInMillis = inputData.getString("timerInMillis") ?: "0"
+        val from: String = inputData.getString(MESSAGE_PARAM_SENDER) ?: ""
+        val body: String = inputData.getString(MESSAGE_PARAM_BODY) ?: ""
+        val timerInMillis: String = inputData.getString(MESSAGE_PARAM_TIMER_IN_MILLIS) ?: "0"
+        val messageId = inputData.getString("messageId") ?: ""
 
         val timerTuple = timerInMillis.toLong().asTimeAndUnit()
         val content = if (timerTuple == null) Strings.get(R.string.message_has_no_timer) else Strings.get(
@@ -43,23 +42,20 @@ class SaveReceivedMessageWork @AssistedInject constructor(
             timerTuple.first
         )
 
-        Log.d(TAG, "doWork: attempting")
-        notifyReceived(content)
-        val save = CoroutineScope(Dispatchers.IO).async {
-            Log.d(TAG, "doWork: SAVING")
-            saveInDatabase(from, body, timerInMillis.toLong())
+        notifyUser(content)
+        withContext(CoroutineScope(Dispatchers.IO).coroutineContext) {
+            saveInDatabase(from, body, timerInMillis.toLong(), messageId)
         }
-        save.await()
 
         return Result.success()
     }
 
-    private suspend fun saveInDatabase(friendId: String, body: String, timerInMillis: Long) {
-        defaultMessagesRepository.saveMessage(friendId, body, timerInMillis)
+    private suspend fun saveInDatabase(friendId: String, body: String, timerInMillis: Long, messageId: String) {
+        defaultMessagesRepository.saveMessage(friendId, body, timerInMillis, messageId)
         defaultMessagesRepository.newChat(friendId)
     }
 
-    private fun notifyReceived(content: String) {
+    private fun notifyUser(content: String) {
         val intent = Intent(applicationContext, MainActivity::class.java).apply { addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP) }
         val pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_ONE_SHOT)
         Notifier.postNotification(applicationContext, Strings.get(R.string.new_message_received), content, pendingIntent)

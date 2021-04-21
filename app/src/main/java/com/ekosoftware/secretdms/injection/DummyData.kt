@@ -67,9 +67,7 @@ object DummyData {
                     randomName(Random.nextInt(0, 4)),
                     Random.nextInt(1, 21) * 1000L,
                     times[index].timeInMillis,
-                    sent,
-                    received,
-                    showedTimeInMillis = sent ?: received
+                    false
                 )
             }
             val allMessages = mutableListOf<Message>()
@@ -86,9 +84,7 @@ object DummyData {
             "tomas",
             10000L,
             LocalDateTime(2021, 4, 7, 15, 0, 31).toDate().time,
-            LocalDateTime(2021, 4, 7, 15, 0, 32).toDate().time,
-            LocalDateTime(2021, 4, 7, 15, 0, 33).toDate().time,
-            null
+          false
         ),
         Message(
             UUID.randomUUID().toString(),
@@ -97,9 +93,7 @@ object DummyData {
             "tomas",
             Random.nextInt(1, 21) * 1000L,
             LocalDateTime(2021, 4, 7, 16, 21, 31).toDate().time,
-            LocalDateTime(2021, 4, 7, 16, 21, 32).toDate().time,
-            LocalDateTime(2021, 4, 7, 16, 21, 33).toDate().time,
-            null
+            false
         ),
         Message(
             UUID.randomUUID().toString(),
@@ -108,9 +102,7 @@ object DummyData {
             "tomas",
             10000L,
             LocalDateTime(2021, 4, 7, 16, 22, 31).toDate().time,
-            LocalDateTime(2021, 4, 7, 16, 22, 32).toDate().time,
-            LocalDateTime(2021, 4, 7, 16, 22, 33).toDate().time,
-            null
+            false
         ),
         Message(
             UUID.randomUUID().toString(),
@@ -119,9 +111,7 @@ object DummyData {
             "tomas",
             10000L,
             LocalDateTime(2021, 4, 7, 16, 22, 34).toDate().time,
-            LocalDateTime(2021, 4, 7, 16, 22, 35).toDate().time,
-            LocalDateTime(2021, 4, 7, 16, 22, 36).toDate().time,
-            null
+            false
         ),
         Message(
             UUID.randomUUID().toString(),
@@ -130,9 +120,7 @@ object DummyData {
             "tomas",
             10000L,
             LocalDateTime(2021, 4, 7, 16, 22, 37).toDate().time,
-            LocalDateTime(2021, 4, 7, 16, 22, 38).toDate().time,
-            LocalDateTime(2021, 4, 7, 16, 22, 39).toDate().time,
-            null
+            false
         ),
         Message(
             UUID.randomUUID().toString(),
@@ -141,9 +129,7 @@ object DummyData {
             "tomas",
             10000L,
             LocalDateTime(2021, 4, 7, 20, 1, 31).toDate().time,
-            LocalDateTime(2021, 4, 7, 20, 1, 32).toDate().time,
-            LocalDateTime(2021, 4, 7, 20, 1, 33).toDate().time,
-            null
+            false
         ),
         Message(
             UUID.randomUUID().toString(),
@@ -152,9 +138,7 @@ object DummyData {
             "tomas",
             10000L,
             LocalDateTime(2021, 4, 7, 23, 57, 31).toDate().time,
-            LocalDateTime(2021, 4, 7, 23, 57, 32).toDate().time,
-            LocalDateTime(2021, 4, 7, 23, 57, 33).toDate().time,
-            null
+            false
         ),
         Message(
             UUID.randomUUID().toString(),
@@ -163,9 +147,7 @@ object DummyData {
             "tomas",
             10000L,
             LocalDateTime(2021, 4, 8, 0, 20, 31).toDate().time,
-            LocalDateTime(2021, 4, 8, 0, 20, 32).toDate().time,
-            LocalDateTime(2021, 4, 8, 0, 20, 33).toDate().time,
-            null
+            false
         ),
         Message(
             UUID.randomUUID().toString(),
@@ -174,9 +156,7 @@ object DummyData {
             "tomas",
             10000L,
             LocalDateTime(2021, 4, 8, 8, 36, 31).toDate().time,
-            LocalDateTime(2021, 4, 8, 8, 36, 32).toDate().time,
-            LocalDateTime(2021, 4, 8, 8, 36, 33).toDate().time,
-            null
+            false
         ),
         Message(
             UUID.randomUUID().toString(),
@@ -185,9 +165,7 @@ object DummyData {
             "tomas",
             10000L,
             LocalDateTime(2021, 4, 8, 8, 37, 31).toDate().time,
-            LocalDateTime(2021, 4, 8, 8, 37, 32).toDate().time,
-            LocalDateTime(2021, 4, 8, 8, 37, 33).toDate().time,
-            null
+            false
         ),
         Message(
             UUID.randomUUID().toString(),
@@ -196,9 +174,7 @@ object DummyData {
             "tomas",
             10000L,
             LocalDateTime(2021, 4, 8, 9, 41, 31).toDate().time,
-            LocalDateTime(2021, 4, 8, 9, 41, 32).toDate().time,
-            LocalDateTime(2021, 4, 8, 9, 41, 33).toDate().time,
-            null
+            false
         ),
         Message(
             UUID.randomUUID().toString(),
@@ -207,9 +183,7 @@ object DummyData {
             "tomas",
             10000L,
             LocalDateTime(2021, 4, 8, 9, 42, 31).toDate().time,
-            LocalDateTime(2021, 4, 8, 9, 42, 32).toDate().time,
-            LocalDateTime(2021, 4, 8, 9, 42, 33).toDate().time,
-            null
+            false
         ),
         Message(
             UUID.randomUUID().toString(),
@@ -218,9 +192,7 @@ object DummyData {
             "tomas",
             10000L,
             LocalDateTime(2021, 4, 8, 19, 7, 31).toDate().time,
-            LocalDateTime(2021, 4, 8, 19, 7, 32).toDate().time,
-            LocalDateTime(2021, 4, 8, 19, 7, 33).toDate().time,
-            null
+            false
         ),
         Message(
             UUID.randomUUID().toString(),
@@ -229,9 +201,7 @@ object DummyData {
             "tomas",
             10000L,
             LocalDateTime(2021, 4, 8, 23, 14, 31).toDate().time,
-            LocalDateTime(2021, 4, 8, 23, 14, 32).toDate().time,
-            LocalDateTime(2021, 4, 8, 23, 14, 33).toDate().time,
-            null
+            false
         ),
         Message(
             UUID.randomUUID().toString(),
@@ -240,9 +210,7 @@ object DummyData {
             "tomas",
             10000L,
             LocalDateTime(2021, 4, 9, 10, 27, 31).toDate().time,
-            LocalDateTime(2021, 4, 9, 10, 27, 32).toDate().time,
-            LocalDateTime(2021, 4, 9, 10, 27, 33).toDate().time,
-            null
+            false
         )
     )
 

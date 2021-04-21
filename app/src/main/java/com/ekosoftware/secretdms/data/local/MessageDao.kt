@@ -22,9 +22,9 @@ interface MessageDao : BaseDao<Message> {
         """
         SELECT 
             chatId AS friendId,
-            (SELECT COUNT(*) FROM messages WHERE readInMillis IS NULL AND direction = 2 AND friendId = chatId) AS unreadMessages,
-            MIN(messages.timer) AS minDestructionTime,
-            MAX(messages.showedTime) AS lastMessageTime
+            (SELECT COUNT(*) FROM messages WHERE NOT read AND direction = 2 AND friendId = chatId) AS unreadMessages,
+            MIN(messages.timer) AS minTimerInMillis,
+            MAX(messages.timestamp) AS lastMessageTimestamp
         FROM chats
         LEFT JOIN messages ON friendId = chatId
         GROUP BY chatId
@@ -32,13 +32,22 @@ interface MessageDao : BaseDao<Message> {
     )
     fun liveChats(): LiveData<List<ChatPreview>>
 
-    @Query("SELECT * FROM messages WHERE friendId = :friendId ORDER BY createdInMillis ASC")
+    @Query("SELECT * FROM messages WHERE friendId = :friendId ORDER BY timestamp ASC")
     fun liveMessagesWithFriendId(friendId: String): LiveData<List<Message>>
+
+    @Query("DELETE FROM messages WHERE friendId =:friendId")
+    suspend fun deleteWithId(friendId: String)
 
     @Query("DELETE FROM messages")
     suspend fun clearDatabase()
 
-    @Query(
+    @Query("UPDATE messages SET timer = timer - 1000 WHERE friendId = :friendId AND direction = 2 AND timer IS NOT NULL AND TIMER > 0")
+    suspend fun updateTimer(friendId: String)
+
+    @Query("DELETE FROM messages WHERE friendId = :friendId AND (timer IS NULL OR TIMER = 0) AND direction = 2 ")
+    suspend fun deleteMessagesWithFinishedTimers(friendId: String)
+
+    /*@Query(
         """
         SELECT 
             chatId AS friendId,
@@ -51,4 +60,5 @@ interface MessageDao : BaseDao<Message> {
     """
     )
     fun liveChats3(): LiveData<List<ChatPreview>>
+    */
 }

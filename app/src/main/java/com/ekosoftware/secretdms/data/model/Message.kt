@@ -27,20 +27,8 @@ data class Message(
     @ColumnInfo(name = "timer")
     var timerInMillis: Long? = 0L,
 
-    @ColumnInfo(name = "createdInMillis")
-    var createdInMillis: Long? = null,
-
-    @ColumnInfo(name = "sentInMillis")
-    var sentInMillis: Long? = null,
-
-    @ColumnInfo(name = "receivedInMillis")
-    var receivedInMillis: Long? = null,
-
-    @ColumnInfo(name = "readInMillis")
-    var readInMillis: Long? = null,
-
-    @ColumnInfo(name = "showedTime")
-    var showedTimeInMillis: Long? = null,
+    @ColumnInfo(name = "timestamp")
+    var timestamp: Long? = null,
 
     @ColumnInfo(name = "read")
     var read: Boolean = false

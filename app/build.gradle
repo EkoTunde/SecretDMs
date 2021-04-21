@@ -58,9 +58,13 @@ dependencies {
     // ConstraintLayout
     implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
 
+    // CardView
+    implementation "androidx.cardview:cardview:$cardViewVersion"
+
     // RecyclerView
     //noinspection GradleDependency
     implementation "androidx.recyclerview:recyclerview:$recyclerViewVersion"
+    implementation "androidx.recyclerview:recyclerview-selection:$recyclerViewSelectionVersion"
 
     // Dagger - Hilt
     implementation "com.google.dagger:hilt-android:$hiltVersion"

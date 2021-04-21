@@ -1,12 +1,14 @@
 package com.ekosoftware.secretdms.ui
 
 import android.os.Bundle
-import android.util.Log
+import android.view.MotionEvent
 import android.view.View
-import androidx.core.view.isVisible
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.selection.*
 import androidx.recyclerview.widget.RecyclerView
 import com.ekosoftware.secretdms.R
 import com.ekosoftware.secretdms.app.resources.Strings
@@ -15,9 +17,14 @@ import com.ekosoftware.secretdms.app.resources.TimeUnits.DAYS
 import com.ekosoftware.secretdms.app.resources.TimeUnits.HOURS
 import com.ekosoftware.secretdms.app.resources.TimeUnits.MINUTES
 import com.ekosoftware.secretdms.app.resources.TimeUnits.SECONDS
+import com.ekosoftware.secretdms.base.BaseViewHolder
 import com.ekosoftware.secretdms.databinding.FragmentChatBinding
 import com.ekosoftware.secretdms.presentation.MainViewModel
+import com.ekosoftware.secretdms.ui.adapters.ChatPreviewsListAdapter
 import com.ekosoftware.secretdms.ui.adapters.MessagesListAdapter
+import com.ekosoftware.secretdms.ui.selection.LinearLayoutManagerWrapper
+import com.ekosoftware.secretdms.ui.selection.OnActionItemClickListener
+import com.ekosoftware.secretdms.ui.selection.SelectionActionModeCallback
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,12 +35,10 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
     private lateinit var binding: FragmentChatBinding
     private val args: ChatFragmentArgs by navArgs()
     private val mainViewModel: MainViewModel by activityViewModels()
-    private val listAdapter: MessagesListAdapter by lazy {
-        MessagesListAdapter(requireContext()) {
-            //Toast.makeText(requireContext(), it.body, Toast.LENGTH_SHORT).show()
-        }
-    }
+    private lateinit var listAdapter: MessagesListAdapter
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<MaterialCardView>
+
+    private lateinit var tracker: SelectionTracker<Long>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -43,40 +48,45 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
         fetchChats()
     }
 
-    private val TAG = "ChatFragment"
-
     private var scrollPosition = 0
+    private var chatListSize = 0
 
     private fun initViews() = binding.run {
         initBottomSheetBehavior()
         binding.newMessage.suffixText = "@10s"
-        slider.addOnChangeListener { _, _, _ -> updateCurrentSliderValueText() }
-        slider.setLabelFormatter { it.toInt().toString() }
+        slider.apply {
+            addOnChangeListener { _, _, _ -> updateCurrentSliderValueText() }
+            setLabelFormatter { it.toInt().toString() }
+        }
         chipGroup.setOnCheckedChangeListener { _, _ -> updateCurrentSliderValueText() }
-        /*newMessage.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && fabGoBackDown.isShown) resetScrollingPosition()
-        }*/
         sendMessageBtn.setOnClickListener {
             newMessage.editText!!.text.toString().trim().takeIf { it.isNotEmpty() }?.let { messageBody ->
                 val timer = getFinalTimerValue()
                 mainViewModel.sendMessage(messageBody, timer)
                 newMessage.editText!!.setText("")
-                //resetScrollingPosition()
             }
         }
-        messagesRecyclerView.adapter = listAdapter
-        messagesRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                scrollPosition += dy
-                Log.d(TAG, "onScrolled: $scrollPosition")
-                if (scrollPosition <= 50 && scrollPosition >= -50) {
-                    if (fabGoBackDown.isShown) fabGoBackDown.hide()
-                } else {
-                    if (!fabGoBackDown.isShown) fabGoBackDown.show()
-                }
-                //if (scrollPosition != 0) fabGoBackDown.show() else fabGoBackDown.hide()
+        messagesRecyclerView.apply {
+            listAdapter = MessagesListAdapter {
+                //Toast.makeText(requireContext(), it.body, Toast.LENGTH_SHORT).show()
             }
-        })
+            val manager = LinearLayoutManagerWrapper(requireContext())
+            manager.stackFromEnd = true
+            layoutManager = manager
+            //(layoutManager as LinearLayoutManagerWrapper).reverseLayout = true
+            adapter = listAdapter
+            initSelectionCapabilities()
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    scrollPosition += dy
+                    if (scrollPosition <= 50 && scrollPosition >= -50) {
+                        if (fabGoBackDown.isShown) fabGoBackDown.hide()
+                    } else {
+                        if (!fabGoBackDown.isShown) fabGoBackDown.show()
+                    }
+                }
+            })
+        }
         fabGoBackDown.setOnClickListener {
             resetScrollingPosition()
         }
@@ -114,16 +124,39 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
         }
     }
 
-    private fun toggleTimerLayoutState(isChecked: Boolean) = binding.run {
-        arrayOf(horizontalContainer, slider, cardViewSliderCurrentValue).forEach {
-            it.isVisible = isChecked
-        }
-        timerTitle.text =
-            if (isChecked) Strings.get(R.string.timer_options_title_expanded)
-            else {
-                val params = getTimerParams()
-                Strings.get(R.string.timer_options_title_collapsed, params.first, params.second)
+    private fun initSelectionCapabilities() {
+        tracker = SelectionTracker.Builder<Long>(
+            "ChatFragment Selection Id",
+            binding.messagesRecyclerView,
+            ItemIdKeyProvider(binding.messagesRecyclerView),
+            ItemLookup(binding.messagesRecyclerView),
+            StorageStrategy.createLongStorage()
+        ).withSelectionPredicate(SelectionPredicates.createSelectAnything()).build()
+        listAdapter.setTracker(tracker)
+        selectionActionModeCallback = SelectionActionModeCallback(actionItemClickListener)
+        tracker.addObserver(selectionObserver)
+    }
+
+    private lateinit var selectionActionModeCallback: SelectionActionModeCallback
+
+    private val selectionObserver: SelectionTracker.SelectionObserver<Long> = object : SelectionTracker.SelectionObserver<Long>() {
+        override fun onSelectionChanged() {
+
+            // Update ActionMode's title
+            selectionActionModeCallback.updateTitle(getString(R.string.selected_amount, tracker.selection.size()))
+
+            // Start ActionMode if it isn't already started
+            if (!selectionActionModeCallback.isActive && tracker.selection.size() == 1) {
+                selectionActionModeCallback.startActionMode(
+                    requireActivity() as AppCompatActivity, R.menu.menu_action_mode, getString(
+                        R.string.selected_amount, 1
+                    )
+                )
             }
+
+            // Finish ActionMode when there's no selection and it is currently active
+            if (selectionActionModeCallback.isActive && tracker.selection.size() == 0) selectionActionModeCallback.finishActionMode()
+        }
     }
 
     private fun getTimerParams(): Pair<Int, String> {
@@ -163,11 +196,55 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
     private fun fetchChats() = mainViewModel.getMessages().observe(viewLifecycleOwner) {
         listAdapter.submitList(it)
         binding.messagesRecyclerView.scrollToPosition(it.lastIndex)
+        chatListSize = it.size
+        if(!jobStarted) mainViewModel.startJob()
+    }
+
+    private var jobStarted = false
+
+    override fun onStop() {
+        super.onStop()
+        mainViewModel.stopJob()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         listAdapter.submitList(emptyList())
         mainViewModel.clearChatId()
+        mainViewModel.clearJob()
+    }
+
+    private val actionItemClickListener: OnActionItemClickListener = object : OnActionItemClickListener {
+        override fun onSelectAllPressed() {
+            tracker.clearSelection()
+            (0 until mainViewModel.messagesCount).forEach { tracker.select(it.toLong()) }
+        }
+
+        override fun onDeletePressed() {
+            val selectedPositions = tracker.selection.toList()
+            mainViewModel.deleteMessagesWithPositions(selectedPositions)
+            Toast.makeText(requireContext(), "DELETING", Toast.LENGTH_SHORT).show()
+            tracker.clearSelection()
+        }
+
+        override fun onFinished() {
+            tracker.clearSelection()
+        }
+    }
+
+    inner class ItemIdKeyProvider(private val recyclerView: RecyclerView) : ItemKeyProvider<Long>(SCOPE_MAPPED) {
+        override fun getKey(position: Int): Long =
+            recyclerView.adapter?.getItemId(position) ?: throw IllegalStateException("RecyclerView adapter is not set!")
+
+        override fun getPosition(key: Long): Int = recyclerView.findViewHolderForItemId(key)?.layoutPosition ?: RecyclerView.NO_POSITION
+    }
+
+    inner class ItemLookup(private val recyclerView: RecyclerView) : ItemDetailsLookup<Long>() {
+        override fun getItemDetails(event: MotionEvent): ItemDetails<Long>? {
+            recyclerView.findChildViewUnder(event.x, event.y)?.let { view ->
+                return (recyclerView.getChildViewHolder(view) as BaseViewHolder<*>).getItemDetails()
+            }
+            return null
+        }
     }
 }
