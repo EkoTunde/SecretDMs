@@ -6,6 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 
 abstract class BaseViewHolder<T>(itemView: View) : RecyclerView.ViewHolder(itemView) {
     open fun bind(item: T) {}
-    open fun bind(item: T, b1: Boolean, b2: Boolean) {}
+    open fun bind(item: T, b1: Boolean, b2: Boolean, position: Int) {}
     abstract fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long>
 }

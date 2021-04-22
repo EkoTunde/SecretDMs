@@ -19,7 +19,7 @@ import com.ekosoftware.secretdms.databinding.ItemMessageSentBinding
 import com.ekosoftware.secretdms.util.asDateTimeString
 
 
-class MessagesListAdapter(private var onSelected: (Message) -> Unit) : BaseListAdapter<Message>(DIFF_CALLBACK) {
+class MessagesListAdapter : BaseListAdapter<Message>(DIFF_CALLBACK) {
 
     init {
         setHasStableIds(true)
@@ -39,12 +39,14 @@ class MessagesListAdapter(private var onSelected: (Message) -> Unit) : BaseListA
                 is MessageSentViewHolder -> holder.bind(
                     item,
                     position == 0 || getItem(position - 1).direction != item.direction,
-                    position == itemCount - 1
+                    position == itemCount - 1,
+                    position
                 )
                 is MessageReceivedViewHolder -> holder.bind(
                     item,
                     position == 0 || getItem(position - 1).direction != item.direction,
-                    position == itemCount - 1
+                    position == itemCount - 1,
+                    position
                 )
                 else -> throw IllegalArgumentException("The given holder (${holder.javaClass}) isn't valid")
             }
@@ -52,7 +54,7 @@ class MessagesListAdapter(private var onSelected: (Message) -> Unit) : BaseListA
     }
 
     inner class MessageSentViewHolder(private val binding: ItemMessageSentBinding) : BaseViewHolder<Message>(binding.root) {
-        override fun bind(item: Message, b1: Boolean, b2: Boolean): Unit = binding.run {
+        override fun bind(item: Message, b1: Boolean, b2: Boolean, position: Int): Unit = binding.run {
             viewMarginTop.isVisible = b1
             pin.isVisible = b1
             viewMarginBottom.isVisible = b2
@@ -88,7 +90,7 @@ class MessagesListAdapter(private var onSelected: (Message) -> Unit) : BaseListA
     }
 
     inner class MessageReceivedViewHolder(private val binding: ItemMessageReceivedBinding) : BaseViewHolder<Message>(binding.root) {
-        override fun bind(item: Message, b1: Boolean, b2: Boolean): Unit = binding.run {
+        override fun bind(item: Message, b1: Boolean, b2: Boolean, position: Int): Unit = binding.run {
             viewMarginTop.isVisible = b1
             pin.isVisible = b1
             viewMarginBottom.isVisible = b2

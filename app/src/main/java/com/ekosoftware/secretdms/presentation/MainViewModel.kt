@@ -1,5 +1,6 @@
 package com.ekosoftware.secretdms.presentation
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.ekosoftware.secretdms.base.Resource
 import com.ekosoftware.secretdms.data.auth.Authentication
@@ -9,6 +10,7 @@ import com.ekosoftware.secretdms.domain.DefaultMessagesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -19,8 +21,6 @@ class MainViewModel @Inject constructor(
     companion object {
         private const val USER_LOGGED_IN_KEY = "is user logged in key"
         private const val FRIEND_ID_KEY = "friend id key"
-        private const val SELECTED_CHATS_KEY = "friend id key"
-        private const val CHATS_COUNT_KEY = "chats count key"
     }
 
     val isUserLoggedIn: MutableLiveData<Boolean> =
@@ -33,8 +33,6 @@ class MainViewModel @Inject constructor(
     fun insertDummyData() = viewModelScope.launch {
         defaultMessagesRepository.insertDummyData()
     }
-
-    private val selectedChats: MutableLiveData<MutableList<String>> = savedStateHandle.getLiveData(SELECTED_CHATS_KEY, mutableListOf())
 
     private var chats: LiveData<List<ChatPreview>>? = null
 
@@ -89,25 +87,17 @@ class MainViewModel @Inject constructor(
 
     private var job: Job? = Job()
 
-    fun startJob() {
-        job = CoroutineScope(viewModelScope.coroutineContext + Dispatchers.Default).launch {
-            var messagesMaxTimer = messages?.value?.maxOf {
-                it.timerInMillis ?: 0
-            } ?: 0
-            while (true) {
-                delay(1000)
-                friendId.value?.let { defaultMessagesRepository.updateTimers(it) }
-            }
+    var threadShouldRun = false
+
+    val s = thread {
+        while (threadShouldRun) {
+            Thread.sleep(1000)
+            decreaseTimers()
         }
-        job?.start()
     }
 
-    fun stopJob() {
-        job?.cancel()
-    }
-
-    fun clearJob() {
-        job = null
+    fun decreaseTimers() = CoroutineScope(viewModelScope.coroutineContext + Dispatchers.IO).launch {
+        friendId.value?.let { defaultMessagesRepository.updateTimers(it) }
     }
 
     fun sendMessage(body: String, timerInMillis: Long) =

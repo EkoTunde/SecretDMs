@@ -60,7 +60,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         initViews()
         fetchAuthenticationData()
         initSelectionCapabilities()
-        //mainViewModel.insertDummyData()
+        //mainViewModel.clearData()
+        mainViewModel.insertDummyData()
     }
 
     private fun initViews() = binding.run {

@@ -36,7 +36,7 @@ class LocalDataSource @Inject constructor(
     suspend fun updateMessagesStatus(message: Message) = messageDao.update(message)
     suspend fun deleteChat(friendId: String) = chatDao.delete(Chat(friendId))
 
-    suspend fun deleteMessagesWithFriendId(friendId: String) = messageDao.deleteWithId(friendId)
+    suspend fun deleteMessagesWithFriendId(friendId: String) = messageDao.deleteWithFriendId(friendId)
 
     suspend fun updateTimersAncCleanDB(friendId: String) {
         messageDao.updateTimer(friendId)

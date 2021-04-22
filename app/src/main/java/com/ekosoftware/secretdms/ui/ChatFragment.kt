@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.selection.*
 import androidx.recyclerview.widget.RecyclerView
@@ -20,7 +21,6 @@ import com.ekosoftware.secretdms.app.resources.TimeUnits.SECONDS
 import com.ekosoftware.secretdms.base.BaseViewHolder
 import com.ekosoftware.secretdms.databinding.FragmentChatBinding
 import com.ekosoftware.secretdms.presentation.MainViewModel
-import com.ekosoftware.secretdms.ui.adapters.ChatPreviewsListAdapter
 import com.ekosoftware.secretdms.ui.adapters.MessagesListAdapter
 import com.ekosoftware.secretdms.ui.selection.LinearLayoutManagerWrapper
 import com.ekosoftware.secretdms.ui.selection.OnActionItemClickListener
@@ -28,6 +28,10 @@ import com.ekosoftware.secretdms.ui.selection.SelectionActionModeCallback
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ChatFragment : Fragment(R.layout.fragment_chat) {
@@ -67,13 +71,10 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
             }
         }
         messagesRecyclerView.apply {
-            listAdapter = MessagesListAdapter {
-                //Toast.makeText(requireContext(), it.body, Toast.LENGTH_SHORT).show()
-            }
+            listAdapter = MessagesListAdapter()
             val manager = LinearLayoutManagerWrapper(requireContext())
             manager.stackFromEnd = true
             layoutManager = manager
-            //(layoutManager as LinearLayoutManagerWrapper).reverseLayout = true
             adapter = listAdapter
             initSelectionCapabilities()
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -197,21 +198,22 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
         listAdapter.submitList(it)
         binding.messagesRecyclerView.scrollToPosition(it.lastIndex)
         chatListSize = it.size
-        if(!jobStarted) mainViewModel.startJob()
+        if (!shouldTimerRun) {
+            shouldTimerRun = true
+            runTimer()
+        }
     }
-
-    private var jobStarted = false
 
     override fun onStop() {
         super.onStop()
-        mainViewModel.stopJob()
+        shouldTimerRun = false
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         listAdapter.submitList(emptyList())
         mainViewModel.clearChatId()
-        mainViewModel.clearJob()
+        shouldTimerRun = false
     }
 
     private val actionItemClickListener: OnActionItemClickListener = object : OnActionItemClickListener {
@@ -245,6 +247,21 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
                 return (recyclerView.getChildViewHolder(view) as BaseViewHolder<*>).getItemDetails()
             }
             return null
+        }
+    }
+
+    /**
+     * To determine whereas messages with timer should run or not.
+     */
+    private var shouldTimerRun = false
+
+    /**
+     * Executes a coroutine so to run a non stop timer to decrease seconds in message's timers.
+     */
+    private fun runTimer() = CoroutineScope(lifecycleScope.coroutineContext + Dispatchers.Default).launch {
+        while (shouldTimerRun) {
+            delay(1000)
+            mainViewModel.decreaseTimers()
         }
     }
 }

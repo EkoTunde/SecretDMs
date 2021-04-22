@@ -71,9 +71,7 @@ class DefaultMessagesRepository @Inject constructor(
     }
 
     override suspend fun deleteMessages(messagesForDeletion: List<Message>?) {
-        messagesForDeletion?.forEach {
-            localDataSource.deleteMessagesWithFriendId(it.friendId)
-        }
+        messagesForDeletion?.forEach { localDataSource.deleteMessage(it) }
     }
 
     override suspend fun updateTimers(friendId: String) {

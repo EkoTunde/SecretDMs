@@ -36,7 +36,7 @@ interface MessageDao : BaseDao<Message> {
     fun liveMessagesWithFriendId(friendId: String): LiveData<List<Message>>
 
     @Query("DELETE FROM messages WHERE friendId =:friendId")
-    suspend fun deleteWithId(friendId: String)
+    suspend fun deleteWithFriendId(friendId: String)
 
     @Query("DELETE FROM messages")
     suspend fun clearDatabase()
